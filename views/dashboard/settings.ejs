@@ -1,0 +1,232 @@
+<!--
+=========================================================
+* Argon Design System - v1.2.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/argon-design-system
+* Copyright 2020 Creative Tim (http://www.creative-tim.com)
+
+Coded by www.creative-tim.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard - Settings</title>
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+    <link rel="stylesheet" href="/assets/dashboard/css/bootstrap.css">
+    <link href="/assets/dashboard/vendor/fonts/circular-std/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/dashboard/css/style.css">
+    <link rel="stylesheet" href="/assets/dashboard/vendor/fonts/fontawesome/css/fontawesome-all.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap-select.css">
+    <link rel="stylesheet" href="/assets/css/datepicker.min.css">
+    <link rel="stylesheet" href="/assets/dashboard/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="/assets/dashboard/vendor/datatables/css/dataTables.bootstrap4.css">
+    <link rel="stylesheet" type="text/css" href="/assets/dashboard/vendor/datatables/css/buttons.bootstrap4.css">
+    <link rel="stylesheet" type="text/css" href="/assets/dashboard/vendor/datatables/css/select.bootstrap4.css">    
+    <link rel="stylesheet" type="text/css" href="/assets/dashboard/vendor/datatables/css/fixedHeader.bootstrap4.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/cookiealert.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/animate.min.css">
+</head>
+<style>
+select.form-control {
+    background-image: url(/assets/dashboard/images/down-arrow.png);
+}
+</style>
+<body>
+    <div class="dashboard-main-wrapper">
+       <div class="dashboard-header">
+            <nav class="navbar navbar-expand-sm fixed-top">
+                <a href="" class="navbar-brand"><img src="/assets/images/relis_logo_white.png" alt="" height="30px"></a>
+                <span class="navbar-toggler-icon"></span>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto navbar-right-top">
+                        <li class="nav-item dropdown nav-user">
+                            <a class="nav-link nav-user-img" href="#" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user mr-2"></i></a>
+                            <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="../account/"><i class="fas fa-fw fa-user-cog"></i> Account</a>
+                                <a class="dropdown-item" id="logout"><i class="fas fa-power-off"></i> Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+      <div class="nav-left-sidebar sidebar-dark">
+            <div class="menu-list">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <a class="d-xl-none d-lg-none" href="#">Dashboard</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav flex-column">
+                            <li class="nav-divider">
+                                General
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../"><i class="fas fa-fw fa-tachometer-alt"></i>Dashboard</a>
+                            </li>  
+                            <li class="nav-item">
+                                <a class="nav-link" href="../../" target="_blank"><i class="fas fa-fw fa-window-restore"></i>View status page</a>
+                            </li>                                                                                  
+                            <li class="nav-divider">
+                                Administration
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../incidents/"><i class="fas fa-fw fa-exclamation-circle"></i>Incidents</a>
+                            </li>                             
+                            <li class="nav-item">
+                                <a class="nav-link" href="../components/"><i class="fas fa-fw fa-cubes"></i>Components</a>
+                            </li>  
+                            <li class="nav-item">
+                                <a class="nav-link" href="../users/"><i class="fas fa-fw fa-users"></i>Users</a>
+                            </li>  
+                            <li class="nav-item">
+                                <a class="nav-link" href="../roles/"><i class="fas fa-fw fa-user-lock"></i>Roles</a>
+                            </li>  
+                            <li class="nav-item">
+                                <a class="nav-link active" href="../settings/"><i class="fas fa-fw fa-cog"></i>Settings</a>
+                            </li>                                                                                                                                                                                                
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <div class="dashboard-wrapper" style="display: none;" id="content">
+            <div class="container-fluid dashboard-content">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="page-header d-flex align-items-center justify-content-between mb-4">
+                            <h2 class="pageheader-title">Settings</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pills-regular" id="table_card">
+                    <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active show" id="general-tab" data-toggle="pill" href="#general" role="tab" aria-controls="home" aria-selected="true">General</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="appearance-tab" data-toggle="pill" href="#appearance" role="tab" aria-controls="profile" aria-selected="false">Appearance</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content settings-content" id="">
+                        <div class="tab-pane fade active show" id="general" role="tabpanel" aria-labelledby="general-tab">
+                            <div class="row">
+                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3"></div> 
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                    <form>
+                                        <h3 class="">General settings</h3>
+                                        <h5 class="text-muted">Configure application data.</h5>
+                                        <div class="form-group">
+                                            <label for="settings_general_name" class="col-form-label">Website name</label>
+                                            <p class="text-muted">Will appear on the status page if enabled</p>
+                                            <input type="text" class="form-control form-control-alternative" id="settings_general_name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="settings_general_description">Website description</label>
+                                            <p class="text-muted">Will appear on the status page if enabled</p>
+                                            <textarea class="form-control form-control-alternative" id="settings_general_description" rows="3"></textarea>
+                                        </div>  
+                                        <br>
+                                        <br>
+                                        <button type="button" class="btn green-button float-right" id="settings_general_save">Save settings</button>                                
+                                    </form>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3"></div>                           
+                            </div> 
+                        </div>
+                        <div class="tab-pane fade" id="appearance" role="tabpanel" aria-labelledby="appearance-tab">
+                            <div class="row">
+                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3"></div> 
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+                                    <form>
+                                        <h3 class="">Appearance settings</h3>
+                                        <h5 class="text-muted">Configure the appearance of the application.</h5>
+                                        <div class="form-group">
+                                            <label for="settings_general_name" class="col-form-label">Website name</label>
+                                            <p class="text-muted">Will appear on the status page if enabled</p>
+                                            <input type="text" class="form-control form-control-alternative" id="settings_general_name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="settings_general_description">Website description</label>
+                                            <p class="text-muted">Will appear on the status page if enabled</p>
+                                            <textarea class="form-control form-control-alternative" id="settings_general_description" rows="3"></textarea>
+                                        </div>  
+                                        <br>
+                                        <br>
+                                        <button type="button" class="btn green-button float-right" id="settings_general_save">Save settings</button>                                
+                                    </form>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3"></div>                           
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="display: none;" id="no_privileges_card">
+                    <div class="card-body">
+                        <h5 style="color:#e24c4c !important;">You do not have sufficient privileges to view or make changes to this page.</h5>
+                    </div>                    
+                </div>
+            <div class="footer fixed-bottom">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            Copyright © 2021 RELIS 
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <div class="text-md-right footer-links d-none d-sm-block">
+                                <a href="javascript: void(0);">About</a>
+                                <a href="javascript: void(0);">Support</a>
+                                <a href="javascript: void(0);">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="alert text-center cookiealert" role="alert">
+        We use &#x1F36A; to ensure you get the best experience on our website. <a href="https://cookiesandyou.com/" target="_blank" class="cookie-link">Learn more</a>
+        <button type="button" class="btn cookie-button btn-sm acceptcookies">
+            I accept
+        </button>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-firestore.js"></script>  
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-storage.js"></script>  
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-auth.js"></script>  
+    <script src="/assets/dashboard/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/firebase_config.js" type="text/javascript"></script>  
+    <script src="/assets/js/cookie.min.js" type="text/javascript"></script>  
+    <script src="/assets/js/moment.js"></script> 
+    <script src="/assets/dashboard/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="/assets/dashboard/vendor/slimscroll/jquery.slimscroll.js"></script>
+    <script src="/assets/dashboard/js/main-js.js"></script>
+    <script src="/assets/dashboard/dashboard.js"></script>
+    <script src="/assets/dashboard/js/settings.js"></script>
+    <script src="/assets/js/bootstrap-select.min.js"></script>
+    <script src="/assets/js/datepicker.min.js"></script>  
+    <script src="/assets/js/datepicker.en.js"></script>  
+    <script src="/assets/js/cookiealert.js"></script> 
+
+    <script src="/assets/dashboard/vendor/multi-select/js/jquery.multi-select.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="/assets/dashboard/vendor/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script src="/assets/dashboard/vendor/datatables/js/buttons.bootstrap4.min.js"></script>
+    <script src="/assets/dashboard/vendor/datatables/js/data-table.js"></script>    
+</body>
+ 
+</html>
