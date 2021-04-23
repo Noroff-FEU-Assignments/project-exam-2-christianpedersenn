@@ -26,7 +26,7 @@ const usersRouter = require('./routes/dashboard/users');
 const gendataRouter = require('./routes/dashboard/gendata');
 const loginRouter = require('./routes/auth/login');
 const forgot_passwordRouter = require('./routes/auth/forgot_password');
-const setupRouter = require('./routes/setup');
+// const setupRouter = require('./routes/setup');
 
 var port = process.env.PORT || 3000;
 const app = express();
@@ -68,7 +68,7 @@ app.use('/dashboard/users', usersRouter);
 app.use('/dashboard/gendata', gendataRouter);
 app.use('/auth/login', loginRouter);
 app.use('/auth/forgot_password', forgot_passwordRouter);
-app.use('/setup', setupRouter);
+// app.use('/setup', setupRouter);
 
 router.get('/auth/', function(req, res, next) {
   res.redirect('/auth/login/');

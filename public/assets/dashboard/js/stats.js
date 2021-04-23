@@ -4,7 +4,7 @@ let openIncidents = 0
 let maintenance = 0
 
 // Get total open incidents
-db.collection("incidents").where("status", "==", 'investigating')
+db.collection("incidents").where("status", "in", ['investigating', 'Investigating', 'Monitoring', 'maintenance'])
 .get()
 .then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
@@ -31,7 +31,7 @@ db.collection("incidents").where("status", "in", ['investigating', 'Investigatin
 
 
 // Get total maintenance
-db.collection("incidents").where("status", "==", 'Monitoring')
+db.collection("incidents").where("status", "==", 'maintenance')
 .get()
 .then((querySnapshot) => {
     querySnapshot.forEach((doc) => {

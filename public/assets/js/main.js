@@ -17,12 +17,29 @@ $('#subscribe_email').click(function(){
     var email = document.getElementById('email').value;
     $('#button_loader').show();
     if( /(.+)@(.+){2,}\.(.+){2,}/.test(email) ){
-        console.log(email);
-        $('#button_loader').hide();
-        $('#subscribe_email').prop('disabled', true);
-        $('#subscribe_email').css('background-color', '#19a769');
-        $('#subscribe_email').html('Success!');
-        
+
+        fetch('http://localhost:3000/subscribe', {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json, text/plain, */*',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email: email})
+        }).then(res => res.json())
+            .then (res => {
+                if (res.status == 'OK') {
+                    $('#button_loader').hide();
+                    $('#subscribe_email').prop('disabled', true);
+                    $('#subscribe_email').css('background-color', '#19a769');
+                    $('#subscribe_email').css('color', '#fff');
+                    $('#subscribe_email').html('Thanks for subscribing!');  
+                } else {
+                    $('#button_loader').hide();
+                    $('#subscribe_email').prop('disabled', true);
+                    $('#subscribe_email').css('background-color', '#e24c4c');
+                    $('#subscribe_email').html('An error happened ..');                     
+                }
+            })
       } else {
         // invalid email
         $('#button_loader').hide();
@@ -85,11 +102,15 @@ db.collection("components").orderBy("status").get().then((querySnapshot) => {
     }    
     querySnapshot.forEach((doc) => { 
         var data = doc.data();
-        if (data.status == 'Maintenance' || data.status == 'Investigating') {
+        if (data.status == 'Investigating') {
             statusHeader.className = 'alert alert-warning';
             statusText.innerHTML = "Some services may not be working right now, see details below.";            
         }           
-           
+        if (data.status == 'Maintenance') {
+            statusHeader.className = 'alert alert-warning';
+            statusText.innerHTML = "Some services may not be working right now, maintenance ongoing. See more details below.";            
+        }           
+        
         let componentStatus = data.status;
         let documentID = doc.id
         collapseID++;
@@ -156,35 +177,58 @@ db.collection("components").orderBy("status").get().then((querySnapshot) => {
             var docRef = db.collection("incidents").doc(incidentID);
             docRef.get().then(function(doc) {
                 if (doc.exists) {
+                    let incidentREF = doc.data();
+                    let maintenanceREF = doc.data().incidentDetails.maintenance;
+                    let monitoringREF = doc.data().incidentDetails.monitoring;
+                    let statusREF = doc.data().status;
+                    let maintenanceDate;
+
+                    try {
+                        maintenanceDate = maintenanceREF.startTime;
+                        monitoringDate = monitoringREF.startTime;
+                    }
+                    catch(err) {
+                        // monitoringDate & resolvedDate will result in an error because it probably doesn't exist in the database
+                    }
+                    finally {
+                        // console.log(monitoringDate);
+                        // console.log(resolvedDate);
+                    }
+
                     var timelineContentNode = document.createElement('div');
                     var timeline = document.createElement('ul');
-    
-                    let maintenanceREF = doc.data().incidentDetails;
-                    let maintenanceStartTimestamp = maintenanceREF.startTime.toDate();
-                    let maintenanceEndTimestamp = maintenanceREF.endTime.toDate();
-                    let maintenanceStartTime = moment(maintenanceStartTimestamp, "DDMMYYYY").format('lll')                
-                    let maintenanceEndTime = moment(maintenanceEndTimestamp, "DDMMYYYY").format('LT')                
+                    if (statusREF == 'maintenance') {
+                        collapseSpanNode.innerHTML = '<i class="fas fa-fw fa-wrench"></i>Maintenance' + '<i class="ni ni-bold-down"></i>';
+                        collapseSpanNode.className = "status-orange float-right";
 
-                    var maintenanceNode = document.createElement('li');
-                    var maintenanceTitleNode = document.createElement('h3');
-                    var maintenanceStatusNode = document.createElement('div')
-                    var maintenanceDescNode = document.createElement('p')
-    
-                    timelineContentNode.appendChild(timeline)
-                    timeline.appendChild(maintenanceNode)
-                    maintenanceNode.appendChild(maintenanceTitleNode);
-                    maintenanceNode.appendChild(maintenanceStatusNode);
-                    maintenanceNode.appendChild(maintenanceDescNode);
-                    cardBodyNode.appendChild(timelineContentNode);
-    
-                    timelineContentNode.className = 'timeline-content';
-                    timeline.className = 'timeline';
-                    maintenanceNode.className = 'incident';
-                    maintenanceStatusNode.className = 'monitoring';
-    
-                    maintenanceTitleNode.innerHTML = maintenanceREF.title;
-                    maintenanceStatusNode.innerHTML = 'Maintenance'  + ' - ' + maintenanceStartTime + ' => ' + maintenanceEndTime ;
-                    maintenanceDescNode.innerHTML = maintenanceREF.description;                          
+                        var maintenanceNode = document.createElement('li');
+                        var maintenanceTitleNode = document.createElement('h3');
+                        var maintenanceStatusNode = document.createElement('div')
+                        var maintenanceDescNode = document.createElement('p')
+
+                        timelineContentNode.appendChild(timeline)
+                        timeline.appendChild(maintenanceNode)
+                        maintenanceNode.appendChild(maintenanceTitleNode);
+                        maintenanceNode.appendChild(maintenanceStatusNode);
+                        maintenanceNode.appendChild(maintenanceDescNode);
+                        cardBodyNode.appendChild(timelineContentNode);
+            
+                        timelineContentNode.className = 'timeline-content';
+                        timeline.className = 'timeline';
+                        maintenanceNode.className = 'incident';
+                        maintenanceStatusNode.className = doc.data().status;
+
+                        let maintenanceDateEnd = maintenanceREF.endTime;
+                        if (maintenanceDateEnd == null || maintenanceDateEnd == undefined) {
+                            maintenanceTitleNode.innerHTML = maintenanceREF.title + ' - ' + maintenanceDate
+                        } else {
+                            maintenanceTitleNode.innerHTML = maintenanceREF.title + ' - ' + maintenanceDate + ' - ' + maintenanceDateEnd.slice(13, 18)
+                        }
+                        maintenanceStatusNode.innerHTML = 'Maintenance';
+                        maintenanceDescNode.innerHTML = maintenanceREF.description;
+                    }
+
+                       
                 } else {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
@@ -212,7 +256,6 @@ db.collection("components").orderBy("status").get().then((querySnapshot) => {
                     try {
                         investigatingDate = investigatingREF.startTime;
                         monitoringDate = monitoringREF.startTime;
-                        // resolvedDate = resolvedREF.startTime;
                     }
                     catch(err) {
                         // monitoringDate & resolvedDate will result in an error because it probably doesn't exist in the database

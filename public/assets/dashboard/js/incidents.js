@@ -68,7 +68,6 @@ if (manage_incidents == 'true') {
   });
 
   $('#description_templates').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-    // do something...
     console.log(e);
     console.log(clickedIndex);
     console.log($(this).val());
@@ -103,10 +102,10 @@ if (manage_incidents == 'true') {
   $("#incident_select").css('margin-bottom', '10px'); 
   $('#incident_select').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
     if (clickedIndex == 0) {
-      table.columns(2).search('Investigating', 'Open', 'Monitoring', 'Maintenance').draw();      
+      table.columns(2).search('maintenance|investigating|open|monitoring', true, false).draw();      
     }
     if (clickedIndex == 1) {
-      table.columns(2).search('Closed').draw();
+      table.columns(2).search('closed', true, false).draw();
     }
     if (clickedIndex == 2) {
       table.columns(2).search('').draw();
@@ -132,11 +131,9 @@ if (manage_incidents == 'true') {
         let title;
         let startTime;
         var affected = data.affected;
-
         var status = data.status.charAt(0).toUpperCase() + data.status.slice(1);
         var created_by = data.created_by;
         var description;
-
         var investigatingREF = data.incidentDetails.investigating;
         var monitoringREF = data.incidentDetails.monitoring;
         var resolvedREF = data.incidentDetails.resolved;
@@ -150,7 +147,6 @@ if (manage_incidents == 'true') {
           description = investigatingREF.description;
           status_string = '<span class="red"><i class="fas fa-fw fa-user-secret"></i> Investigating</span>'
         }       
-
         if (data.status == 'monitoring') {
           title = monitoringREF.title
           startTime = monitoringREF.startTime
@@ -159,7 +155,6 @@ if (manage_incidents == 'true') {
           status_string = '<span class="orange"><i class="fas fa-fw fa-heartbeat"></i> Monitoring</span>'
 
         }
-
         if (data.status == 'resolved') {
           title = resolvedREF.title
           startTime = resolvedREF.startTime
@@ -167,7 +162,6 @@ if (manage_incidents == 'true') {
           description = resolvedREF.description;
           status_string = '<span class="green"><i class="fas fa-fw fa-check-circle"></i> Resolved</span>'
         }  
-        
         if (data.status == 'maintenance') {
           title = maintenanceREF.title
           startTime = maintenanceREF.startTime
@@ -182,7 +176,6 @@ if (manage_incidents == 'true') {
           description = closedREF.description;
           status_string = '<span class="green"><i class="fas fa-fw fa-check-circle"></i> Closed</span>'
         }                   
-
         table.row.add({
           "id": doc.id,
           "title": title,
@@ -197,13 +190,10 @@ if (manage_incidents == 'true') {
           //  
           //  FIX THIS, update the create function with a option to set the type value
           //  
-          "type": 'Incident',
-          //  
-          //  
-          //  
-          //   
+          "type": 'Incident', 
         }).node().id = doc.id;
-        table.columns(2).search('Investigating', 'Open', 'Monitoring', 'Maintenance').draw();
+        // table.columns(2).search('Maintenance', 'Investigating', 'Open', 'Monitoring' ).draw();
+        table.columns(2).search('maintenance|investigating|open|monitoring', true, false).draw();
       });  
   }, err => {
     console.log(`Encountered error: ${err}`);
@@ -220,7 +210,46 @@ $('#create_incident').click(function () {
   if (inc_title == '' || inc_type == '' || inc_description == '' || inc_components == '' || inc_start_date == '') {
     // console.log('No input');
     // Error handler here
-  } else {
+  } 
+  
+  if (inc_type == 'Planned maintenance') {
+      db.collection("incidents").add({
+        created_by: current_user,
+        status: 'maintenance',
+        component: inc_components[0],
+        affected: inc_components,
+        incidentDetails: {
+          maintenance: {
+            description: inc_description,           
+            startTime: inc_start_date,
+            endTime: inc_end_date,
+            title: inc_title,
+          }
+        }
+    })     
+    .then(function(incidentID) {
+      console.log("Document written with ID: ", incidentID.id);
+      inc_components.forEach(function (val) {
+        db.collection("components").doc(val).update({
+            status: 'Maintenance',
+            incidentID: {
+              id: incidentID.id
+            }
+        })     
+        .then(function() {
+          console.log("Document successfully written!");
+          $('#create_modal').modal('hide'); 
+        })
+        .catch(function(error) {
+          console.error("Error writing document: ", error);
+        });  
+      })              
+    })
+    .catch(function(error) {
+      console.error("Error adding document: ", error);
+    });    
+  } 
+  if (inc_type == 'Incident') {
       db.collection("incidents").add({
         created_by: current_user,
         status: 'investigating',
@@ -411,6 +440,30 @@ $('#inc_delete').click(function () {
   })     
 });
 
+
+// Fix statuspage bug
+$('#fix_statuspage').click(function () {
+  $('#fix_statuspage').attr("disabled", true);
+  db.collection("incidents").get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+        doc.data().affected.forEach(incident => {
+          db.collection('components').doc(incident).update({
+            incidentID: firebase.firestore.FieldValue.delete(),
+            status: 'Operational'
+          }) 
+          .then(function() {
+            console.log("Status page fixed!");
+            $('#fix_statuspage').html('Done!')   
+          })
+          .catch(function(error) {
+            console.error("Error writing document: ", error);
+          });        
+        });     
+    });
+  });           
+});
+
+
 // Set incident to status closed
 $('#inc_close').click(function () {
   console.log(table_row_data.id);
@@ -418,7 +471,7 @@ $('#inc_close').click(function () {
     incidentDetails: {
       closed: {
         startTime: table_row_data.date,
-        description: 'Closed',
+        description: table_row_data.description,
         endTime: currentMonth + ' ' + currentDay + ', ' + currentYear + ' ' + moment().format('hh:mm'),
         title: "Closed"
       }

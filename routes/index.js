@@ -64,15 +64,6 @@ function getData() {
 }
 getData()
 
-// let componentsObserver = db.collection('data')
-//   .onSnapshot(querySnapshot => {
-//     querySnapshot.docChanges().forEach(change => {
-//       if (change.type === 'modified') {
-//         reloadBrowser()
-//       }
-//     });
-// })
-
 function reloadBrowser() {
   reloadBrowserVal = true
   setTimeout(() => {
@@ -82,20 +73,20 @@ function reloadBrowser() {
   // The value must be somewhat higher than the value in main.js to avoid client browser getting stuck in a reload loop
 }
 
-// let dataREF = db.collection('data');
-// dataREF.onSnapshot(querySnapshot => {
-//     querySnapshot.forEach((doc) => {
-//       var data = doc.data();
-//       Object.keys(data).forEach(function(val) {                
-//         let componentsStatus = data[val].status;
-//         if (componentsStatus !== 'Operational') {
-//           console.log(componentsStatus);
-//         }
-//       });
-//     });  
-// }, err => {
-//   console.log(`Encountered error: ${err}`);
-// });
 
+router.post('/subscribe', function(req, res, next) {
+  console.log(req.body);
+  console.log(req.body.email);
+  sendmail({
+    from: 'christian@relis.no',
+    to: req.body.email,
+    subject: 'Subscription RELIS status',
+    html: 'Thanks for subscribing to RELIS status.'
+  }, function (err, reply) {
+    console.log(err && err.stack)
+    console.dir(reply)
+    res.send({status: 'OK'})
+  }) 
+});
 
 module.exports = router;

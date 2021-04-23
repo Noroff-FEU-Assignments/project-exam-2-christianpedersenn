@@ -20,10 +20,17 @@ setTimeout(() => {
           if (doc.exists) {
               var data = doc.data(); 
               if (user.uid == doc.id) {
-                document.getElementById('userDropdown').innerHTML ='<i class="fas fa-user mr-2"></i>' + data.name
-                if (data.name != Cookies.get('userDropdown')) {
-                    Cookies.set('current_user', data.name)
-                }
+                  // First, check if the element exists, if it doesn't don't do anything.
+                  // This check exists because this script appears on both the dashboard and the actual status page.
+                  if (document.getElementById('userDropdown') == null) {
+                      // Do nothing as this isn't the dashboard page.
+                  } else {
+                    document.getElementById('userDropdown').innerHTML ='<i class="fas fa-user mr-2"></i>' + data.name
+                    if (data.name != Cookies.get('userDropdown')) {
+                        Cookies.set('current_user', data.name)
+                    }
+                  }
+
               } else {
                   // In this case something is very wrong
               }   

@@ -81,7 +81,6 @@ if (manage_users == 'true') {
         let name = data.name;
         var created_by = data.created_by;
         
-        
         table.row.add({
           "userID": doc.id,
           "role": role,
@@ -109,7 +108,6 @@ $('#user_delete_user_details').click(function () {
     $('#user_delete_user_details').html('User details deleted!')
     $('#user_delete_user_details').attr("disabled", false);
     $("#delete_user_spinner").hide()
-    // $('#manage_modal').modal('hide');
   }).catch(function(error) {
       console.error("Error removing document: ", error);
       $('#user_delete_user_details').attr("disabled", false);
@@ -176,7 +174,7 @@ $('#user_create').click(function () {
           }, 1000);                
           secondFB.auth().signOut()
           .then(function () {
-          // Sign-out successful.
+          // Signout successful.
           // console.log('Second FireBase user signed out.');
           }, function (error) {
           // An error happened.
@@ -200,6 +198,8 @@ $('#user_create').click(function () {
 })
 
 $('#user_update').click(function () { 
+  $("#user_update_spinner").show()
+  $("#user_update").attr("disabled", true);
   const role = $('#user_role_update').val();
   console.log(role);
   console.log(table_row_data.userID);
@@ -207,18 +207,12 @@ $('#user_update').click(function () {
   var docRef = db.collection("roles").doc(role);
   docRef.get().then((doc) => {
       if (doc.exists) {
-          console.log("Document data:", doc.data());
           let manage_incidents = doc.data().manage_incidents
           let manage_components = doc.data().manage_components 
           let manage_users = doc.data().manage_users 
           let manage_roles = doc.data().manage_roles 
           let manage_settings = doc.data().manage_settings  
 
-          console.log(manage_incidents);
-          console.log(manage_components);
-          console.log(manage_users);
-          console.log(manage_roles);
-          console.log(manage_settings);
           db.collection("users").doc(table_row_data.userID).set({
             role: role,
             role_permissions: {
@@ -243,10 +237,14 @@ $('#user_update').click(function () {
             Cookies.set('manage_components', manage_components)                
             Cookies.set('manage_users', manage_users)                
             Cookies.set('manage_roles', manage_roles)                
-            Cookies.set('manage_settings', manage_settings)             
+            Cookies.set('manage_settings', manage_settings)   
+            $("#user_update_spinner").hide()
+            $('#user_update').attr("disabled", false);                      
           })
           .catch(function(error) {
             console.error("Error writing document: ", error);
+            $("#user_update_spinner").hide()
+            $('#user_update').attr("disabled", false);            
           });
 
       } else {

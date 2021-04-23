@@ -165,7 +165,8 @@ a.text-primary:hover, a.text-primary:focus {
     /* background-color: #666 !important; */
 }
 .timeline-content p {
-    font-weight: 300;
+    font-weight: 500;
+    line-height: 1;
 }
 
 .timeline-content strong {
@@ -256,6 +257,14 @@ a.text-primary:hover, a.text-primary:focus {
     color: #fff;
     display:inline-block;
     background-color: #e24c4c;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.timeline .maintenance {
+    color: #fff;
+    display:inline-block;
+    background-color: #f57d0d;
     padding: 10px;
     margin-bottom: 10px;
 }
