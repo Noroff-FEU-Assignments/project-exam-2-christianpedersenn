@@ -96,10 +96,87 @@ if (manage_incidents == 'true') {
   $('div.dataTables_length select').attr('data-width', '75px');
   $('div.dataTables_length select').selectpicker('refresh'); 
   
-  var incident_select = '<select class="selectpicker" id="incident_select"><option value="open">Open incidents</option>' +
-  '<option value="closed">Closed incidents</option><option value="all">All incidents</option></select>';
+
+  let totalIncidents = 0
+  let openIncidents = 0
+  let closedIncidents = 0
+
+  // Get total open incidents
+  db.collection("incidents").where("status", "in", ['investigating', 'Investigating', 'Monitoring', 'maintenance'])
+  .get()
+  .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+          openIncidents++
+      });
+      
+  })
+  .catch((error) => {
+      console.log("Error getting documents: ", error);
+  });
+
+  // Get total incidents 
+  db.collection("incidents").where("status", "in", ['investigating', 'Investigating', 'Closed', 'Operational', 'Monitoring'])
+  .get()
+  .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+          totalIncidents++
+      });
+  })
+  .catch((error) => {
+      console.log("Error getting documents: ", error);
+  });
+  // Get total closed incidents
+  db.collection("incidents").where("status", "==", "Closed")
+  .get()
+  .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+          closedIncidents++
+      });
+  })
+  .catch((error) => {
+      console.log("Error getting documents: ", error);
+  });  
+
+  setTimeout(() => {
+      url = new URL(window.location.href);
+      console.log(url);
+
+
+      if (url.search == '?status=open') {
+        console.log('?status=open');
+        $("#open_incidents").html('Open incidents (' + openIncidents + ')');
+        $(".filter-option-inner-inner").html('Open incidents (' + openIncidents + ')');   
+        $('#incident_select').selectpicker('render');   
+        table.columns(2).search('maintenance|investigating|open|monitoring', true, false).draw();  
+      }
+      if (url.search == '?status=all') {
+        console.log('?status=all');
+        $(".filter-option-inner-inner").html('Total incidents (' + totalIncidents + ')');
+        $('#incident_select').selectpicker('render');
+        table.columns(2).search('').draw();
+      }      
+
+      $('.table-responsive').show();  
+      $('#table_spinner').hide();  
+      $("#closed_incidents").html('Closed incidents (' + closedIncidents + ')');
+      $("#total_incidents").html('Total incidents (' + totalIncidents + ')');
+      $('#incident_select').selectpicker('render');        
+  }, 1500);
+
+  $('.table-responsive').hide(); 
+
+  var incident_select = '<select class="selectpicker" id="incident_select"><option value="open" id="open_incidents">Open incidents (' + openIncidents + ')</option>' +
+  '<option value="closed" id="closed_incidents">Closed incidents (' + closedIncidents + ')</option><option value="all" id="total_incidents">All incidents (' + totalIncidents + ')</option></select>';
+
   $("#incident_select").html(incident_select); 
   $("#incident_select").css('margin-bottom', '10px'); 
+  
+  $('#incident_select').on('show.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+    $("span:contains('Open incidents')").replaceWith('Open incidents (' + openIncidents + ')')
+    $("span:contains('Closed incidents')").replaceWith('Closed incidents (' + closedIncidents + ')')
+    $("span:contains('All incidents')").replaceWith('All incidents (' + totalIncidents + ')')
+  });
+
   $('#incident_select').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
     if (clickedIndex == 0) {
       table.columns(2).search('maintenance|investigating|open|monitoring', true, false).draw();      
