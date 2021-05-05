@@ -35,15 +35,15 @@ app.listen(port, function () {
   // open('http://localhost:' + port, {app: ['google chrome']});  
 });
 
-browserSync.init({
-  files : './**/*',
-  watchOptions : {
-      ignored : 'node_modules/*',
-      ignoreInitial : true
-  }
-});
+// browserSync.init({
+//   files : './**/*',
+//   watchOptions : {
+//       ignored : 'node_modules/*',
+//       ignoreInitial : true
+//   }
+// });
 
-app.use(require('connect-browser-sync')(browserSync, { injectHead: true }));
+// app.use(require('connect-browser-sync')(browserSync, { injectHead: true }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({
   extended: true
