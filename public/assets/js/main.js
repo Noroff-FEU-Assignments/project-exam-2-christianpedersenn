@@ -18,7 +18,7 @@ $('#subscribe_email').click(function(){
     $('#button_loader').show();
     if( /(.+)@(.+){2,}\.(.+){2,}/.test(email) ){
 
-        fetch('http://localhost:3000/subscribe', {
+        fetch('/subscribe', {
             method: 'post',
             headers: {
               'Accept': 'application/json, text/plain, */*',
