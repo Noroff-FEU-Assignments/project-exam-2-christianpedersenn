@@ -25,7 +25,7 @@ var currentDay = moment().format("DD")
 var dateToday = moment().format("DD") + moment().format("MM") + moment().format("YYYY")
 
 router.get('/', function(req, res, next) {
-  res.render('index', {title: 'NodeJS Status'})
+  res.render('index', {title: 'RELIS status'})
 });
 
 router.get('/reloadBrowser', function(req, res, next) {  
@@ -42,28 +42,6 @@ let incidentType;
 let incidentDate;
 let incidentDesc;
 
-// setInterval(getData, 60000);
-function getData() {
-//   db.collection("date").orderBy("id", "desc").limit(15).get().then((querySnapshot) => {
-//     console.log(querySnapshot);
-//     querySnapshot.forEach((doc) => {
-//         var data = doc.data();
-//         let thisMonth = data.id.slice(2, 4)
-//         if (thisMonth == currentMonth) {
-//             incidentType;
-//             incidentDate = data.date;
-//             incidentDesc = data.desc;
-//             if (data.incident == false) {
-//                 incidentType = 'no-incident'
-//             } else {
-//                 incidentType = 'incident'
-//             }           
-//         }
-//     });
-// });  
-}
-getData()
-
 function reloadBrowser() {
   reloadBrowserVal = true
   setTimeout(() => {
@@ -78,7 +56,7 @@ router.post('/subscribe', function(req, res, next) {
   console.log(req.body);
   console.log(req.body.email);
   sendmail({
-    from: 'christian@relis.no',
+    from: 'noreply@relis.no',
     to: req.body.email,
     subject: 'Subscription RELIS status',
     html: 'Thanks for subscribing to RELIS status.'
